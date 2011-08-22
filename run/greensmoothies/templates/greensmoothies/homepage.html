@@ -1,0 +1,138 @@
+<!DOCTYPE html> 
+<html> 
+ 
+<head> 
+	<meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<title>greensmoothies.com</title> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" /> 
+	<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script> 
+	<script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script> 
+        <script>
+            $(function() {
+     
+                $("#callAjax").click(function() {
+                    function post_drink_record_ajax(coords) {
+                      console.log('sending ajax');
+                      $.ajax({
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/drinkrecord/",
+                        data: ({lat: coords.latitude, lng: coords.longitude}),
+                        cache: false,
+                        dataType: "text",
+                        success: onSuccess
+                      });
+                    }
+
+                    // Try W3C Geolocation (Preferred)
+                    if(navigator.geolocation) {
+                      browserSupportFlag = true;
+                      navigator.geolocation.getCurrentPosition(function(position) {
+                        post_drink_record_ajax(position.coords);
+                      }, function() {
+                        handleNoGeolocation(browserSupportFlag);
+                      });
+                    } else {
+                      browserSupportFlag = false;
+                      handleNoGeolocation(browserSupportFlag);
+                    }
+                    
+                    function handleNoGeolocation(errorFlag) {
+                      if (errorFlag == true) {
+                        alert("Geolocation service failed.  your smoothie was not recorded");
+                      } else {
+                        alert("Your browser doesn't support geolocation. Your smoothie was not recorded.");
+                      }
+                    }
+                });
+     
+                $("#resultLog").ajaxError(function(event, request, settings, exception) {
+                  $("#resultLog").html("Error Calling: " + settings.url + "<br />HTPP Code: " + request.status);
+                });
+     
+                function onSuccess(data)
+                {
+                    $("#resultLog").html("Result: " + data);
+                }
+     
+            });
+        </script>
+</head> 
+ 
+	
+<body> 
+ 
+<!-- Start of first page: #one --> 
+<div data-role="page" id="foo"> 
+ 
+	<div data-role="header"> 
+		<h1>Home</h1> 
+	</div><!-- /header --> 
+ 
+	<div data-role="content" id="one">	
+            <div>
+            <div style="float:left;">
+            <img src="{{ STATIC_URL }}katie_green_smoothie.jpg" width="50%"/>
+            </div>
+            <div style="float:right;">
+            <input id="callAjax" type="button" data-inline="true" value="I drank a green smoothie today" />
+            </div>
+            </div>
+        <div id="resultLog"></div>
+        <div id="recipe">	
+		<h2>Green Smoothies: Serves 2</h2> 
+		<h3>Blend:</h3> 
+                <ul>
+<li>1.5 cups water</li>
+<li>2-3 tbsp lemon juice</li>
+<li>2 bananas (frozen)</li>
+<li>1/2 apple or handful of blueberries (you can always sub in other fruit. I've done frozen strawberries, fresh peaches, really whatever I have on hand. I also occasionally add carrots or fresh ginger. The real key is a frozen banana!).</li>
+                </ul>
+
+<h3>After blended well add:</h3>
+<ul>
+<li>2 cups kale, collards, romaine, spinach, any kind of green you have...</li>
+<li>wheat germ (optional)</li>
+<li>flax seed (optional)</li>
+</ul>
+        </div>
+	</div><!-- /content --> 
+	
+        <div data-role="footer">
+	        <div data-role="navbar">
+		        <ul>
+			        <li><a href="#home" class="ui-btn-active">Home</a></li>
+			        <li><a href="#about">About</a></li>
+		        </ul>
+	        </div><!-- /navbar -->
+        </div><!-- /footer -->
+</div><!-- /page one --> 
+ 
+<!-- Start of third page: #about --> 
+<div data-role="page" id="about"> 
+ 
+	<div data-role="header"> 
+		<h1>About</h1> 
+	</div><!-- /header --> 
+ 
+	<div data-role="content">	
+		<p>Katie makes a green smoothie almost every morning. She and her husband Brian love to share the bright green drink in their bright green kitchen each morning, alongside a handful of almonds and a teaspoon of cod liver oil. </p>
+		<p>Since 2009, Katie's green smoothie enthusiasm has flourished after learning this special recipe from <a href="http://joshwhiton.com/?page_id=245">Josh Whiton</a>. They both agree, the world needs more leafy greens.</p>
+		<p>As an after school teacher, an acrobat with <a href="http://acroentertainment.com">AcroEntertainment</a>, and an avid supporter of organic, local, seasonal foods, she urges others to share in the green smoothie revolution! </p>
+		<p>Feel energized in the mornings and rejuvenated in the evenings!</p>
+		<p>Join us in making the world a better place, by drinking a green smoothie! Please log your green smoothie consumption on this website and help us spread the word!</p>
+		<p>Share your recipe favorites here! The only requirement for a green smoothie is that it contains one form of leafy greens! We look forward to hearing what kind of green smoothies you're drinking :)</p>
+	</div><!-- /content --> 
+	
+	<div data-role="footer"> 
+	        <div data-role="navbar">
+		        <ul>
+			        <li><a href="#home">Home</a></li>
+			        <li><a href="#about" class="ui-btn-active">About</a></li>
+		        </ul>
+	        </div><!-- /navbar -->
+	</div><!-- /footer --> 
+</div><!-- /page about --> 
+ 
+</body> 
+</html> 
