@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-
+from django.views.generic import TemplateView
+from django.contrib.sites.models import Site
 from django.http import HttpResponse
 
 from greensmoothies.models import DrinkRecord
@@ -14,3 +15,11 @@ def drinkrecordcreate(request):
             form.save()
             to_return = 'Success'
     return HttpResponse(to_return)
+
+class HomepageView(TemplateView):
+    template_name = "greensmoothies/homepage.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomepageView, self).get_context_data(**kwargs)
+        context['site'] = Site.objects.get_current()
+        return context

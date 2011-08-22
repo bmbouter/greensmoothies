@@ -16,7 +16,7 @@
                       console.log('sending ajax');
                       $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/drinkrecord/",
+                        url: "{{ site.domain }}/drinkrecord/",
                         data: ({lat: coords.latitude, lng: coords.longitude}),
                         cache: false,
                         dataType: "text",

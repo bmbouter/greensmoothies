@@ -5,5 +5,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^sentry/', include('sentry.web.urls')),
     url(r'^', include('greensmoothies.urls', namespace='greensmoothies')),
 )
