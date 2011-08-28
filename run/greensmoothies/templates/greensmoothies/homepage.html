@@ -11,20 +11,34 @@
         <script>
             $(function() {
      
-                $("#callAjax").click(function() {
-                    function post_drink_record_ajax(coords) {
-                      console.log('sending ajax');
-                      $.ajax({
-                        type: "POST",
-                        url: "{{ site.domain }}/drinkrecord/",
-                        data: ({lat: coords.latitude, lng: coords.longitude}),
-                        cache: false,
-                        dataType: "text",
-                        success: onSuccess
-                      });
+                $("form").submit(function(e){
+                    var handleNoGeolocation = function(errorFlag) {
+                      if (errorFlag == true) {
+                        alert("Geolocation service failed.  your smoothie was not recorded");
+                      } else {
+                        alert("Your browser doesn't support geolocation. Your smoothie was not recorded.");
+                      }
                     }
 
-                    // Try W3C Geolocation (Preferred)
+                    var form = $(this);
+                    var post_drink_record_ajax = function(coords) {
+                         $.ajax({ 
+                              type : form.attr('method'),
+                              url   : form.attr('action'),
+                              data  : form.serialize().concat('&', 'lat=', coords.latitude, '&', 'lng=', coords.longitude), // data to be submitted
+                              success: function(response){
+                                 var serverResponse = JSON.parse(response);
+                                 if (serverResponse.status == 'success') {
+                                     $("form").replaceWith('<h2>Your Smoothie Was Recorded.</h2><a href="javascript:window.location.reload();">record another smoothie</a>');
+                                 } else {
+                                     alert("Your CAPTCHA response was not correct.  Please try again.  Your smoothie was NOT recorded.");
+                                     window.location.reload();
+                                 };
+                              }
+                         });
+                    }
+
+                    // Try W3C Geolocation
                     if(navigator.geolocation) {
                       browserSupportFlag = true;
                       navigator.geolocation.getCurrentPosition(function(position) {
@@ -37,23 +51,8 @@
                       handleNoGeolocation(browserSupportFlag);
                     }
                     
-                    function handleNoGeolocation(errorFlag) {
-                      if (errorFlag == true) {
-                        alert("Geolocation service failed.  your smoothie was not recorded");
-                      } else {
-                        alert("Your browser doesn't support geolocation. Your smoothie was not recorded.");
-                      }
-                    }
-                });
-     
-                $("#resultLog").ajaxError(function(event, request, settings, exception) {
-                  $("#resultLog").html("Error Calling: " + settings.url + "<br />HTPP Code: " + request.status);
-                });
-     
-                function onSuccess(data)
-                {
-                    $("#resultLog").html("Result: " + data);
-                }
+                    return false;
+                 });
      
             });
         </script>
@@ -75,7 +74,10 @@
             <img src="{{ STATIC_URL }}katie_green_smoothie.jpg" width="50%"/>
             </div>
             <div style="float:right;">
-            <input id="callAjax" type="button" data-inline="true" value="I drank a green smoothie today" />
+            <form action="{{ site.domain }}/drinkrecord/" method="POST">{% csrf_token %}
+                {{ recaptcha_field }}
+                <input type="submit" value="I drank a green smoothie today" />
+            </form>
             </div>
             </div>
         <div id="resultLog"></div>
