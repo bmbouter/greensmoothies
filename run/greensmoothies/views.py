@@ -23,4 +23,5 @@ class HomepageView(TemplateView):
         context = super(HomepageView, self).get_context_data(**kwargs)
         context['site'] = Site.objects.get_current()
         context['recaptcha_field'] = DrinkRecordForm()['recaptcha']
+        context['serve_count_text'] = str(len(DrinkRecord.objects.all())) + ' Smoothies Served ...'
         return context
