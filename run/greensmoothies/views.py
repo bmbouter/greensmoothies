@@ -16,11 +16,9 @@ def drinkrecordcreate(request):
             to_return = '{ "status": "success" }'
     return HttpResponse(to_return)
 
-class HomepageView(TemplateView):
-    template_name = "greensmoothies/homepage.html"
-
+class PageView(TemplateView):
     def get_context_data(self, **kwargs):
-        context = super(HomepageView, self).get_context_data(**kwargs)
+        context = super(PageView, self).get_context_data(**kwargs)
         context['site'] = Site.objects.get_current()
         context['recaptcha_field'] = DrinkRecordForm()['recaptcha']
         context['serve_count_text'] = str(len(DrinkRecord.objects.all())) + ' Smoothies Served ...'
